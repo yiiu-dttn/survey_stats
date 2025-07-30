@@ -31,7 +31,7 @@ def get_survey_details(survey_id):
     try:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT s."ID", s."CO_SO_DAO_TAO_ID", c."MA_DON_VI", s."ELEMENTS"
+                SELECT s."ID", s."CO_SO_DAO_TAO_ID", c."MA_DON_VI", s."ELEMENTS", s."TITLE"
                 FROM public."SSS_SURVEY" s
                 LEFT JOIN "CSDT_CO_SO_DAO_TAO" c ON s."CO_SO_DAO_TAO_ID" = c."ID"
                 WHERE s."ID" = %s
@@ -63,6 +63,7 @@ def get_survey_details(survey_id):
                 'facility_id': survey_info[1],
                 'facility_name': survey_info[2] or "Không xác định",
                 'elements': elements,
+                'title': survey_info[4],
                 'total_answers': counts[0] if counts else 0,
                 'valid_answers': counts[1] if counts else 0
             }
