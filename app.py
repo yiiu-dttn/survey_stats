@@ -114,6 +114,50 @@ def main():
                     fit_columns_on_grid_load=True,
                     theme="material"
                 )
+                
+        # Biểu đồ tròn thể hiện tỷ lệ lựa chọn
+        st.subheader(f"Biểu đồ thể hiện tỷ lệ hài lòng: {survey_details['title']}")
+
+        chart_count = 0
+        chart_columns = []
+
+        for question_type, group_data in stats.items():
+            for options, group_stats in group_data.items():
+                for stat in group_stats:
+                    # Tạo hàng mới sau mỗi 3 biểu đồ
+                    if chart_count % 3 == 0:
+                        chart_columns = st.columns(3)
+
+                    col = chart_columns[chart_count % 3]
+                    with col:
+                        st.markdown(f"**{stat['question']}**")
+                        chart_df = pd.DataFrame({
+                            'Lựa chọn': list(stat['percentages'].keys()),
+                            'Tỷ lệ (%)': list(stat['percentages'].values())
+                        })
+
+                        st.plotly_chart(
+                            {
+                                "data": [{
+                                    "type": "pie",
+                                    "labels": chart_df['Lựa chọn'],
+                                    "values": chart_df['Tỷ lệ (%)'],
+                                    "hole": 0.3,
+                                    "marker": {
+                                         "colors": ["#3498db", "#e67e22", "#9b59b6", "#f1c40f", "#e84393"]  # lam, cam, tím, vàng, hồng
+                                        }
+                                }],
+                                "layout": {
+                                    "margin": {"t": 20, "b": 10, "l": 10, "r": 10},
+                                    "height": 300,
+                                    "showlegend": True
+                                }
+                            },
+                            use_container_width=True
+                        )
+
+                    chart_count += 1
+
 
         if st.button("Quay lại chọn khảo sát"):
             del st.session_state.survey_id
